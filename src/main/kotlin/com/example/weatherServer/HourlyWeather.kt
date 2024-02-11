@@ -15,5 +15,5 @@ data class HourlyWeather(
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "hourly_id")
-        var hourly: Hourly,
+        var hourly: Hourly?,
 )

@@ -15,5 +15,5 @@ data class CurrentWeather(
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "current_id")
-        var current: Current,
+        var current: Current?,
 )

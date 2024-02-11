@@ -15,5 +15,5 @@ data class DailyWeather(
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "daily_id")
-        var daily: Daily,
+        var daily: Daily?,
 )

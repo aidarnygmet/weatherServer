@@ -9,7 +9,7 @@ data class Hourly(
         val id: Long? = null,
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "forecast_id")
-        var forecast: ForecastData,
+        var forecast: ForecastData?,
         val dt: Long,
         val temp: Double,
         val feels_like: Double,
@@ -21,7 +21,7 @@ data class Hourly(
         val visibility: Int,
         val wind_speed: Double,
         val wind_deg: Int,
-        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "hourly", orphanRemoval = true)
+        @OneToMany(fetch = FetchType.EAGER,cascade = [CascadeType.ALL], mappedBy = "hourly", orphanRemoval = true)
         val weather: List<HourlyWeather>,
         val pop: Double
 )

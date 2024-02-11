@@ -9,7 +9,7 @@ data class FeelsLike(
         val id: Long? = null,
         @OneToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "daily_id")
-        var daily: Daily,
+        var daily: Daily?,
         val day: Double,
         val night: Double,
         val eve: Double,

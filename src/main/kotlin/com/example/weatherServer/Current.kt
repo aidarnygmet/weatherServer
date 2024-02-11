@@ -9,7 +9,7 @@ data class Current(
         val id: Long? = null,
         @OneToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "forecast_id")
-        var forecast: ForecastData,
+        var forecast: ForecastData?,
         val dt: Long,
         val sunrise: Long,
         val sunset: Long,
@@ -23,6 +23,6 @@ data class Current(
         val visibility: Int,
         val wind_speed: Double,
         val wind_deg: Int,
-        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "current", orphanRemoval = true)
+        @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL], mappedBy = "current", orphanRemoval = true)
         var weather: List<CurrentWeather>,
 )

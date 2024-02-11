@@ -9,7 +9,7 @@ data class Daily(
         val id: Long? = null,
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "forecast_id")
-        var forecast: ForecastData,
+        var forecast: ForecastData?,
         val dt: Long,
         val sunrise: Long,
         val sunset: Long,
@@ -18,15 +18,15 @@ data class Daily(
         val moon_phase: Double,
         val summary: String,
         @OneToOne(cascade = [CascadeType.ALL], mappedBy = "daily", orphanRemoval = true)
-        val temp: Temp,
+        val temp: Temp?,
         @OneToOne(cascade = [CascadeType.ALL], mappedBy = "daily", orphanRemoval = true)
-        val feels_like: FeelsLike,
+        val feels_like: FeelsLike?,
         val pressure: Int,
         val humidity: Int,
         val dew_point: Double,
         val wind_speed: Double,
         val wind_deg: Int,
-        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "daily", orphanRemoval = true)
+        @OneToMany(fetch = FetchType.EAGER,cascade = [CascadeType.ALL], mappedBy = "daily", orphanRemoval = true)
         val weather: List<DailyWeather>,
         val clouds: Int,
         val pop: Double,

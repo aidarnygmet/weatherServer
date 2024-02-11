@@ -10,19 +10,19 @@ data class ForecastData(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long? = null,
         @Column(nullable = false)
-        val lat: Float,
+        val lat: Double,
         @Column(nullable = false)
-        val lon: Float,
+        val lon: Double,
         @Column(nullable = false)
         val timezone: String,
         @Column(nullable = false)
         val timezone_offset: String,
         @OneToOne(cascade = [CascadeType.ALL], mappedBy = "forecast", orphanRemoval = true)
         val current: Current,
-        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "forecast", orphanRemoval = true)
+        @OneToMany(fetch = FetchType.EAGER,cascade = [CascadeType.ALL], mappedBy = "forecast", orphanRemoval = true)
         val hourly: List<Hourly>,
-        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "forecast", orphanRemoval = true)
+        @OneToMany(fetch = FetchType.EAGER,cascade = [CascadeType.ALL], mappedBy = "forecast", orphanRemoval = true)
         val daily: List<Daily>,
-        @OneToMany(cascade = [CascadeType.ALL], mappedBy = "forecast", orphanRemoval = true)
+        @OneToMany(fetch = FetchType.EAGER,cascade = [CascadeType.ALL], mappedBy = "forecast", orphanRemoval = true)
         val alerts: List<Alerts>
 )

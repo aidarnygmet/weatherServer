@@ -15,14 +15,23 @@ class DataInitializer(private val weatherService: WeatherService, private val ti
         runBlocking {
             locations = controller.getAllLocation()
             locations.forEach { loc->
-                var start = controller.getLastdt(loc.lat, loc.lon)+3600L
-
-                val end = System.currentTimeMillis()/1000
+//                var start = controller.getLastdt(loc.lat, loc.lon)+3600L
+//
+//                val end = System.currentTimeMillis()/1000
                 controller.saveForecastData(loc.lat, loc.lon)
-                for(dt in start until end step step){
-                    controller.saveTimestampData(loc.lat, loc.lon, dt)
-                }
+//                for(dt in start until end step step){
+//                    controller.saveTimestampData(loc.lat, loc.lon, dt)
+//                }
             }
+            val l = controller.getForecast("Astana1")
+            if (l != null) {
+                l.forEach {
+                    println("forecast: $it")
+                }
+            } else {
+                println("forecast null")
+            }
+
         }
 //        runBlocking {
 //            for (dt in start until end step 3000)

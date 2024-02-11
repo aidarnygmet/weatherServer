@@ -9,7 +9,7 @@ data class Temp(
         val id: Long? = null,
         @OneToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "daily_id")
-        var daily: Daily,
+        var daily: Daily?,
         val day: Double,
         val min: Double,
         val max: Double,
