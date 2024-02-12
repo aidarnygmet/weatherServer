@@ -1,6 +1,5 @@
 package com.example.weatherServer
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -43,7 +42,7 @@ class Controller (private val weatherApiService: WeatherService,
     }
 
     @GetMapping("get/forecast/{name}")
-    suspend fun getForecast(@PathVariable name: String):List<ForecastData>?{
+    suspend fun getForecast(@PathVariable name: String):List<Hourly>?{
         val loc = locationService.getByName(name)
         val forecast = forecastEntityService.findByLatAndLon(loc.lat, loc.lon)
         forecast?.forEach {
@@ -66,7 +65,14 @@ class Controller (private val weatherApiService: WeatherService,
                 d.feels_like?.daily = null
             }
         }
-        return forecast
+        if(forecast != null){
+        val selectedHourlyList: List<Hourly> = forecast.dropLast(1) // Exclude the last forecast object
+                .flatMap { f ->
+                    f.hourly.take(12) // Take 12 hourly objects from each forecast except the last one
+                } + forecast.last().hourly
+            return selectedHourlyList
+        }
+        return null
     }
 
 
