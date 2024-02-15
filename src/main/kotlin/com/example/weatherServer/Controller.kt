@@ -1,15 +1,14 @@
 package com.example.weatherServer
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RestController
+import kotlinx.coroutines.runBlocking
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class Controller (private val weatherApiService: WeatherService,
         private val timestampEntityService: TimestampEntityService,
         private val forecastEntityService: ForecastEntityService,
-        private val locationService: LocationService
+        private val locationService: LocationService,
+        private val workHourlyService: WorkHourlyService
         ){
         private val apiKey = "48dd284900f5f0d8e2116acda4cfbdb0"
         private val exclude = "minutely"
@@ -24,8 +23,17 @@ class Controller (private val weatherApiService: WeatherService,
     }
 
     suspend fun saveForecastData(lat: Double, lon: Double){
-        val data = weatherApiService.getForecastData(lat,lon,exclude, units,lang,apiKey)
-        forecastEntityService.save(data)
+        runBlocking {
+            val data = weatherApiService.getForecastData(lat,lon,exclude, units,lang,apiKey)
+            forecastEntityService.save(data)
+            val workHourly = forecastEntityService.findByLatAndLon(lat, lon)
+            if (workHourly != null) {
+                println("saveForecastData: workHourly size: ${workHourly.size}")
+                workHourlyService.save(workHourly)
+            }
+
+        }
+
     }
 
     suspend fun getLastdt(lat: Double, lon: Double): Long{
@@ -36,44 +44,18 @@ class Controller (private val weatherApiService: WeatherService,
     suspend fun saveLocation(loc: Location){
         locationService.save(loc)
     }
-
+    @GetMapping("get/locations")
     suspend fun getAllLocation():List<Location>{
         return locationService.getAll()
     }
-
+    @CrossOrigin(origins = ["http://localhost:3002"])
     @GetMapping("get/forecast/{name}")
-    suspend fun getForecast(@PathVariable name: String):List<Hourly>?{
+    suspend fun getForecast(@PathVariable name: String):List<WorkHourly>?{
         val loc = locationService.getByName(name)
-        val forecast = forecastEntityService.findByLatAndLon(loc.lat, loc.lon)
-        forecast?.forEach {
-            it.current.forecast = null
-            it.current.weather.forEach { w->
-                w.current = null
-            }
-            it.hourly.forEach { h->
-                h.forecast = null
-                h.weather.forEach { w->
-                    w.hourly = null
-                }
-            }
-            it.daily.forEach { d->
-                d.forecast = null
-                d.weather.forEach { w->
-                    w.daily = null
-                }
-                d.temp?.daily = null
-                d.feels_like?.daily = null
-            }
-        }
-        if(forecast != null){
-        val selectedHourlyList: List<Hourly> = forecast.dropLast(1) // Exclude the last forecast object
-                .flatMap { f ->
-                    f.hourly.take(12) // Take 12 hourly objects from each forecast except the last one
-                } + forecast.last().hourly
-            return selectedHourlyList
-        }
-        return null
+        println(loc)
+        return workHourlyService.getByCoordinates(loc.lat, loc.lon)
     }
+
 
 
 }

@@ -7,9 +7,10 @@ import org.springframework.stereotype.Component
 class ScheduledTask(
         private val weatherService: WeatherService, private val timestampEntityService: TimestampEntityService,
         private val forecastEntityService: ForecastEntityService,
-        private val locationService: LocationService
+        private val locationService: LocationService,
+        private val workHourlyService: WorkHourlyService
 ) {
-    val controller = Controller(weatherService, timestampEntityService, forecastEntityService, locationService)
+    val controller = Controller(weatherService, timestampEntityService, forecastEntityService, locationService, workHourlyService)
     lateinit var locations: List<Location>
     @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Almaty")
     suspend fun morningTask(){
@@ -18,11 +19,12 @@ class ScheduledTask(
             controller.saveForecastData(loc.lat, loc.lon)
         }
     }
-    @Scheduled(cron = "0 0 20 * * *", zone = "Asia/Almaty")
+    @Scheduled(cron = "0 5 * * * *", zone = "Asia/Almaty")
     suspend fun eveningTask(){
         locations = controller.getAllLocation()
         locations.forEach { loc->
             controller.saveForecastData(loc.lat, loc.lon)
         }
+        println(controller.getForecast("Astana1"))
     }
 }
