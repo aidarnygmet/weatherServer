@@ -63,6 +63,22 @@ class ForecastEntityService {
             null
         }
     }
+    fun findByLatAndLonDirectly(@Param("lat") lat: Double, @Param("lon") lon: Double): List<Hourly>?{
+        return try {
+
+            val query = entityManager.createQuery("SELECT h FROM ForecastData f JOIN f.hourly h JOIN (" +
+                    "SELECT h2.dt AS dt, MAX(h2.forecast.id) AS max_forecast_id " +
+                    "FROM Hourly h2 GROUP BY h2.dt) AS max_ids " +
+                    "ON h.dt = max_ids.dt AND h.forecast.id = max_ids.max_forecast_id " +
+                    "WHERE f.lat = :lat AND f.lon = :lon")
+            query.setParameter("lat", lat)
+            query.setParameter("lon", lon)
+            query.resultList as List<Hourly>
+        } catch (e: Exception){
+            println("error in forecastDirectly: $e")
+            null
+        }
+    }
     fun hourlyToWorkHourly(lat: Double, lon: Double, hourly: List<Hourly>?): List<WorkHourly>?{
         return hourly?.map { WorkHourly(lat = lat, lon = lon,
                 temp = it.temp,

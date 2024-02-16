@@ -56,6 +56,20 @@ class Controller (private val weatherApiService: WeatherService,
         return workHourlyService.getByCoordinates(loc.lat, loc.lon)
     }
 
+    @CrossOrigin(origins = ["http://localhost:3002"])
+    @GetMapping("get/forecast_directly/{name}")
+    suspend fun getForecastDirectly(@PathVariable name: String):List<Hourly>?{
+        val loc = locationService.getByName(name)
+        println(loc)
+        val response = forecastEntityService.findByLatAndLonDirectly(loc.lat, loc.lon)
+        response?.forEach { h->
+            h.forecast = null
+            h.weather.forEach { w->
+                w.hourly = null
+            }
+        }
+        return response
+    }
 
 
 }
