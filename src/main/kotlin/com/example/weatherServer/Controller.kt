@@ -48,15 +48,14 @@ class Controller (private val weatherApiService: WeatherService,
     suspend fun getAllLocation():List<Location>{
         return locationService.getAll()
     }
-    @CrossOrigin(origins = ["http://localhost:3002"])
+    @CrossOrigin(origins = ["*"])
     @GetMapping("get/forecast/{name}")
     suspend fun getForecast(@PathVariable name: String):List<WorkHourly>?{
         val loc = locationService.getByName(name)
         println(loc)
         return workHourlyService.getByCoordinates(loc.lat, loc.lon)
     }
-
-    @CrossOrigin(origins = ["http://localhost:3002"])
+    @CrossOrigin(origins = ["*"])
     @GetMapping("get/forecast_directly/{name}")
     suspend fun getForecastDirectly(@PathVariable name: String):List<Hourly>?{
         val loc = locationService.getByName(name)

@@ -12,14 +12,14 @@ class ScheduledTask(
 ) {
     val controller = Controller(weatherService, timestampEntityService, forecastEntityService, locationService, workHourlyService)
     lateinit var locations: List<Location>
+//    @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Almaty")
+//    suspend fun morningTask(){
+//        locations = controller.getAllLocation()
+//        locations.forEach { loc->
+//            controller.saveForecastData(loc.lat, loc.lon)
+//        }
+//    }
     @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Almaty")
-    suspend fun morningTask(){
-        locations = controller.getAllLocation()
-        locations.forEach { loc->
-            controller.saveForecastData(loc.lat, loc.lon)
-        }
-    }
-    @Scheduled(cron = "0 5 * * * *", zone = "Asia/Almaty")
     suspend fun eveningTask(){
         locations = controller.getAllLocation()
         locations.forEach { loc->
